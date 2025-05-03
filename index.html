@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parte de Servicio - Vigilante</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #e0e0e0; /* Gris más oscuro */
+        }
+        .error { color: red; display: block; margin-top: -10px; margin-bottom: 10px; }
+        .contenido { display: block; }
+        .oculto { display: none; }
+        .fotoPreview {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 10px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #otroTurnoInput { display: none; }
+        .menu button {
+            background-color: #007bff; /* Color azul para los botones del menú */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .menu button:hover {
+            background-color: #0056b3; /* Color azul más oscuro al pasar el ratón */
+        }
+        .form-label {
+            font-weight: bold; /* Etiquetas de formulario en negrita */
+        }
+        .btn-success {
+            background-color: #28a745; /* Color verde para el botón de enviar */
+            color: white;
+            border: none;
+        }
+        .btn-success:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Color azul para el botón de descargar PDF */
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Color azul más oscuro al pasar el ratón */
+        }
+        .header {
+            background-color: #f0f0f0; /* Color de fondo gris claro para el encabezado */
+        }
+        .footer {
+            background-color: #f0f0f0; /* Color de fondo gris claro para el pie de página */
+        }
+    </style>
+</head>
+<body>
+    <div class="contenido" id="paginaPrincipal">
+        <div class="header text-center p-4 mb-4">
+            <img src="logo_empresa.png" alt="Logo de la Empresa" class="img-fluid" style="max-width: 150px; margin-bottom: 10px;">
+            <h1>Nombre de la Empresa</h1>
+            <p>Dirección: Calle Ejemplo, 123 - Teléfono: 123-456-789</p>
+        </div>
+
+        <div class="menu d-flex justify-content-center mb-4">
+            <button id="btnServicio" onclick="mostrarFormulario('servicio')"><i class="fas fa-file-alt"></i> Parte Diario de Servicio</button>
+            <button id="btnIncidencias" onclick="mostrarFormulario('incidencias')"><i class="fas fa-exclamation-triangle"></i> Parte de Incidencias</button>
+        </div>
+    </div>
+
+    <div id="formulario" class="oculto">
+        <h2 id="tituloFormulario" class="text-center mb-4"></h2>
+        <form id="parteTrabajo" class="container">
+            <div class="mb-3">
+                <label for="servicio" class="form-label">Nombre del Servicio:</label>
+                <input type="text" id="servicio" class="form-control" required>
+                <span id="servicioError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="lugar" class="form-label">Dirección del Servicio:</label>
+                <input type="text" id="lugar" class="form-control" required>
+                <span id="lugarError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="vigilante" class="form-label">Nombre del Vigilante:</label>
+                <input type="text" id="vigilante" class="form-control" required>
+                <span id="vigilanteError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="tip" class="form-label">N° de T.I.P.:</label>
+                <input type="text" id="tip" class="form-control" required>
+                <span id="tipError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha:</label>
+                <input type="date" id="fecha" class="form-control" required>
+                <span id="fechaError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="turno" class="form-label">Turno:</label>
+                <select id="turno" class="form-select" required>
+                    <option value="">Selecciona un turno</option>
+                    <option value="Mañana">Mañana</option>
+                    <option value="Tarde">Tarde</option>
+                    <option value="Noche">Noche</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <span id="turnoError" class="error"></span>
+                <input type="text" id="otroTurnoInput" class="form-control mt-2" placeholder="Ingresa otro turno">
+            </div>
+
+            <div id="campoIncidencias" class="mb-3" style="display:none;">
+                <label for="incidencias" class="form-label">Incidencias:</label>
+                <textarea id="incidencias" class="form-control" rows="5"></textarea>
+                <span id="incidenciasError" class="error"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="observaciones" class="form-label">Observaciones:</label>
+                <textarea id="observaciones" class="form-control" rows="5" required></textarea>
+                <span id="observacionesError" class="error"></span>
+            </div>
+            
+            <div id="campoAdjuntarFoto" style="display:none;" class="mb-3">
+                <label for="foto" class="form-label">Adjuntar Fotografías:</label>
+                <input type="file" id="foto" class="form-control" accept="image/*" multiple>
+                <span id="fotoError" class="error"></span>
+                <div id="fotosPreview"></div>
+            </div>
+
+            <label>Firma del Vigilante:</label>
+            <canvas id="firmaCanvas" width="300" height="150"></canvas>
+            <button type="button" onclick="limpiarFirma()">Borrar Firma</button>
+
+            <button type="submit" class="btn btn-success">Enviar</button>
+            <button type="button" id="btnDescargarPDF" class="btn btn-primary" style="display:none;">Descargar PDF</button>
+        </form>
+    </div>
+
+    <div class="footer text-center p-3">
+        <p>© 2025 Todos los derechos reservados | Autor: Carlos López</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        const canvas = document.getElementById("firmaCanvas");
+        const ctx = canvas.getContext("2d");
+        let dibujando = false;
+        let ultimoX = 0;
+        let ultimoY = 0;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+
+        function iniciarDibujo(event) {
+            dibujando = true;
+            ultimoX = obtenerPosicionX(event);
+            ultimoY = obtenerPosicionY(event);
+        }
+
+        function finalizarDibujo() {
+            dibujando = false;
+        }
+
+        function dibujar(event) {
+            if (!dibujando) return;
+            const x = obtenerPosicionX(event);
+            const y = obtenerPosicionY(event);
+            ctx.beginPath();
+            ctx.moveTo(ultimoX, ultimoY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ultimoX = x;
+            ultimoY = y;
+            event.preventDefault();
+        }
+
+        function obtenerPosicionX(event) {
+            const rect = canvas.getBoundingClientRect();
+            return (event.clientX || event.touches[0].clientX) - rect.left;
+        }
+
+        function obtenerPosicionY(event) {
+            const rect = canvas.getBoundingClientRect();
+            return (event.clientY || event.touches[0].clientY) - rect.top;
+        }
+
+        function limpiarFirma() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        canvas.addEventListener("mousedown", iniciarDibujo);
+        canvas.addEventListener("mouseup", finalizarDibujo);
+        canvas.addEventListener("mousemove", dibujar);
+        canvas.addEventListener("touchstart", iniciarDibujo);
+        canvas.addEventListener("touchend", finalizarDibujo);
+        canvas.addEventListener("touchmove", dibujar);
+
+        document.getElementById("turno").addEventListener("change", function() {
+            const otroTurnoInput = document.getElementById("otroTurnoInput");
+            if (this.value === "Otro") {
+                otroTurnoInput.style.display = "block";
+            } else {
+                otroTurnoInput.style.display = "none";
+            }
+        });
+
+        document.getElementById("parteTrabajo").addEventListener("submit", function(event) {
+            const servicio = document.getElementById("servicio").value;
+            const lugar = document.getElementById("lugar").value;
+            const vigilante = document.getElementById("vigilante").value;
+            const tip = document.getElementById("tip").value;
+            const fecha = document.getElementById("fecha").value;
+            const turnoSelect = document.getElementById("turno");
+            const turno = turnoSelect.value === "Otro" ? document.getElementById("otroTurnoInput").value : turnoSelect.value;
+            const incidencias = document.getElementById("incidencias").value;
+            const observaciones = document.getElementById("observaciones").value;
+            let errores = false;
+
+            document.querySelectorAll(".error").forEach(span => span.textContent = "");
+
+            if (!servicio) {
+                document.getElementById("servicioError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (!lugar) {
+                document.getElementById("lugarError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (!vigilante) {
+                document.getElementById("vigilanteError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (!tip) {
+                document.getElementById("tipError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            } else if (!/^\d+$/.test(tip)) { // Validación numérica con expresión regular
+                document.getElementById("tipError").textContent = "Debe ingresar solo dígitos";
+                errores = true;
+            }
+            if (!fecha) {
+                document.getElementById("fechaError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (!turno) {
+                document.getElementById("turnoError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (document.getElementById("campoIncidencias").style.display === "block" && !incidencias) {
+                document.getElementById("incidenciasError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+            if (!observaciones) {
+                document.getElementById("observacionesError").textContent = "Este campo debe rellenarse obligatoriamente";
+                errores = true;
+            }
+
+            if (errores) {
+                event.preventDefault();
+            }
+        });
+
+        function mostrarFormulario(tipo) {
+            const paginaPrincipal = document.getElementById("paginaPrincipal");
+            const formulario = document.getElementById("formulario");
+            const campoIncidencias = document.getElementById("campoIncidencias");
+            const campoAdjuntarFoto = document.getElementById("campoAdjuntarFoto");
+            const btnServicio = document.getElementById("btnServicio");
+            const btnIncidencias = document.getElementById("btnIncidencias");
+            const btnDescargarPDF = document.getElementById("btnDescargarPDF");
+            const tituloFormulario = document.getElementById("tituloFormulario");
+
+            if (tipo === 'servicio') {
+                tituloFormulario.innerText = "Parte Diario de Servicio";
+                campoIncidencias.style.display = "none";
+                campoAdjuntarFoto.style.display = "none";
+            } else if (tipo === 'incidencias') {
+                tituloFormulario.innerText = "Parte de Incidencias";
+                campoIncidencias.style.display = "block";
+                campoAdjuntarFoto.style.display = "block";
+            }
+
+            paginaPrincipal.style.display = "none";
+            formulario.style.display = "block";
+            btnDescargarPDF.style.display = "inline-block";
+
+            btnServicio.classList.remove("activo");
+            btnIncidencias.classList.remove("activo");
+            document.getElementById(tipo === 'servicio' ? "btnServicio" : "btnIncidencias").classList.add("activo");
+        }
+
+        document.getElementById("foto").addEventListener("change", function() {
+            const previewContainer = document.getElementById("fotosPreview");
+            previewContainer.innerHTML = ''; // Limpiar previsualizaciones anteriores
+            const files = this.files;
+
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("fotoPreview");
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById("btnDescargarPDF").addEventListener("click", function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const anchoPagina = doc.internal.pageSize.getWidth();
+            const margen = 10;
+            let yPos = 20;
+
+            // Encabezado
+            doc.setFontSize(18);
+            doc.text("Parte de Servicio - Vigilante", anchoPagina / 2, yPos, { align: "center" });
+            yPos += 20;
+
+            // Tabla de datos
+            doc.autoTable({
+                head: [["Campo", "Valor"]],
+                body: [
+                    ["Nombre del Servicio", document.getElementById("servicio").value],
+                    ["Dirección del Servicio", document.getElementById("lugar").value],
+                    ["Nombre del Vigilante", document.getElementById("vigilante").value],
+                    ["N° de T.I.P.", document.getElementById("tip").value],
+                    ["Fecha", document.getElementById("fecha").value],
+                    ["Turno", document.getElementById("turno").value === "Otro" ? document.getElementById("otroTurnoInput").value : document.getElementById("turno").value],
+                    ["Incidencias", document.getElementById("incidencias").value || "N/A"],
+                    ["Observaciones", document.getElementById("observaciones").value]
+                ],
+                startY: yPos,
+                margin: { horizontal: margen },
+                styles: { cellPadding: 5, fontSize: 10 },
+                headStyles: { fillColor: [220, 220, 220] }
+            });
+            yPos = doc.autoTable.previous.finalY + 20;
+
+            // Firma
+            doc.text("Firma del Vigilante:", margen, yPos);
+            yPos += 10;
+            const firmaDataURL = canvas.toDataURL();
+            doc.addImage(firmaDataURL, 'PNG', margen, yPos, 50, 25);
+            yPos += 40;
+
+            // Fotos
+            const fotos = document.getElementById("foto").files;
+            if (fotos && fotos.length > 0) {
+                doc.text("Fotos Adjuntas:", margen, yPos);
+                yPos += 10;
+                let xPos = margen;
+                for (let i = 0; i < fotos.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        doc.addImage(e.target.result, 'JPEG', xPos, yPos, 50, 25);
+                        xPos += 60;
+                        if ((i + 1) % 3 === 0) {
+                            yPos += 30;
+                            xPos = margen;
+                        }
+                    }
+                    reader.readAsDataURL(fotos[i]);
+                }
+                yPos += 30;
+            }
+
+            // Pie de página
+            const fechaActual = new Date().toLocaleDateString();
+            doc.text(`Fecha de creación: ${fechaActual} | Autor: Carlos López`, anchoPagina / 2, doc.internal.pageSize.getHeight() - 10, { align: "center" });
+
+            doc.save("parte_servicio.pdf");
+        });
+    </script>
+</body>
+</html>
